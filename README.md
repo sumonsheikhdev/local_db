@@ -52,7 +52,7 @@ void main() async {
 
 ## To get available methods to store and retrieve data:
 
-```dart
+
 import 'package:local_db/local_db.dart';
 
  data
@@ -76,7 +76,7 @@ await data.addToDataList(
 );
 
 
-```
+
 
 ##Contribution
 
