@@ -13,7 +13,7 @@ and the Flutter guide for
 
 # Package Name
 
-Package Name is a Flutter package inspired by Sharedpreference that makes it easy to store and retrieve data locally. It provides a simple and intuitive interface for managing local data with support for dynamic models.
+local_db is a Flutter package inspired by Sharedpreference that makes it easy to store and retrieve data locally. It provides a simple and intuitive interface for managing local data with support for dynamic models.
 
 ## Features
 
