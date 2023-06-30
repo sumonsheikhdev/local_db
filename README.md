@@ -40,7 +40,7 @@ dependencies:
 
 Import the package into your Dart file to initialize:
 
-```dart
+
 import 'package:local_db/init.dart';
 
 void main() async {
@@ -48,11 +48,11 @@ void main() async {
   await LocalDb.initialization();
   runApp(const MyApp());}
 
-```
+
 
 ## To get available methods to store and retrieve data:
 
-
+```dart
 import 'package:local_db/local_db.dart';
 
  data
@@ -77,6 +77,7 @@ await data.addToDataList(
 
 
 
+```
 
 ##Contribution
 
