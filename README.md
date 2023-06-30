@@ -35,12 +35,12 @@ dependencies:
     git:
       url: https://github.com/sumonsheik/local_db.git
 
-
+```
 ## Usage
 
 Import the package into your Dart file to initialize:
 
-
+```dart
 import 'package:local_db/init.dart';
 
 void main() async {
@@ -48,7 +48,7 @@ void main() async {
   await LocalDb.initialization();
   runApp(const MyApp());}
 
-
+```
 
 ## To get available methods to store and retrieve data:
 
