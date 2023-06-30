@@ -11,29 +11,73 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages).
 -->
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+# Package Name
+
+Package Name is a Flutter package inspired by Sharedpreference that makes it easy to store and retrieve data locally. It provides a simple and intuitive interface for managing local data with support for dynamic models.
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+- Store and retrieve boolean values
+- Store and retrieve string values
+- Store and retrieve integer values
+- Store and retrieve double values
+- Store and retrieve complex data structures using JSON serialization
+- Add data to a list and retrieve list data
+- Delete data by index or key
 
-## Getting started
+## Installation
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+Add the following dependency to your `pubspec.yaml` file:
+
+```yaml
+dependencies:
+    local_db:
+    git:
+      url: https://github.com/sumonsheik/local_db.git
+
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+Import the package into your Dart file to initialize:
 
 ```dart
-const like = 'sample';
+import 'package:local_db/init.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await LocalDb.initialization();
+  runApp(const MyApp());}
+
 ```
 
-## Additional information
+## To get available methods to store and retrieve data:
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+```dart
+import 'package:local_db/local_db.dart';
+
+ data
+//Such as
+
+//To get list data
+data.getListData<YourModel>(
+            key: 'your key',
+            fromJson: (json) => YourModel.fromJson(
+                json), // Provide the correct implementation here
+          ),
+
+// To add data
+
+await data.addToDataList(
+    newData: yourData according to Model,
+    key: 'dataList',
+    
+    toJson: (data) => data.toJson(), //Convert to json
+    fromJson: (json) => YourModel.fromJson(json),
+);
+
+
+```
+
+##Contribution
+
+Contributions are welcome! If you encounter any issues or have suggestions for improvements, please file an issue. If you would like to contribute code, feel free to open a pull request with your changes.
