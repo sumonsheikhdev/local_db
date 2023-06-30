@@ -1,12 +1,10 @@
-library local_db;
-
-/// A Calculator.
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'init.dart';
 
 abstract class LocalDatabase {
+  //Boolean
   Future<bool> storeBool({required bool value, required String key});
   bool? getBool({required String key});
 
@@ -19,11 +17,21 @@ abstract class LocalDatabase {
   Future<void> storeDouble({required double value, required String key});
   double? getDouble({required String key});
 
-  Future<void> addToDataList({required DataModel newData, required String key});
+  Future<void> addToDataList<T>({
+    required T newData,
+    required String key,
+    required Map<String, dynamic> Function(T) toJson,
+    required T Function(Map<String, dynamic>) fromJson,
+  });
+  Future<List<T>> getListData<T>(
+      {required String key,
+      required T Function(Map<String, dynamic>) fromJson});
 
-  Future<List<DataModel>> getListData({required String key});
-
-  Future<void> deleteByIndex({required int index, required String key});
+  Future<void> deleteByIndex<T>({
+    required int index,
+    required String key,
+    required T Function(Map<String, dynamic>) fromJson,
+  });
 
   Future<void> deleteByKey({required String key});
 }
@@ -64,18 +72,20 @@ class LocalDatabaseImplement extends LocalDatabase {
   }
 
   @override
-  Future<void> addToDataList({
-    required DataModel newData,
+  Future<void> addToDataList<T>({
+    required T newData,
     required String key,
+    required Map<String, dynamic> Function(T) toJson,
+    required T Function(Map<String, dynamic>) fromJson,
   }) async {
-    final dataList = await getListData(key: key);
+    final dataList = await getListData<T>(key: key, fromJson: fromJson);
 
     // Add the new data to the existing list
     dataList.add(newData);
 
-    // Encode the list of maps into a list of strings
+    // Encode the list of objects into a list of JSON strings
     List<String> encodedList =
-        dataList.map((data) => jsonEncode(data.toJson())).toList();
+        dataList.map((data) => jsonEncode(toJson(data))).toList();
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -84,21 +94,23 @@ class LocalDatabaseImplement extends LocalDatabase {
   }
 
   @override
-  Future<List<DataModel>> getListData({required String key}) async {
+  Future<List<T>> getListData<T>(
+      {required String key,
+      required T Function(Map<String, dynamic>) fromJson}) async {
     // Retrieve the encoded list from SharedPreferences
     List<String>? encodedList = sharedPreferences.getStringList(key);
 
     // Decode the list of strings back into a list of maps
     List<Map<String, dynamic>> dataList = encodedList
-            ?.map((str) => Map<String, dynamic>.from(jsonDecode(str)))
+            ?.map((str) => jsonDecode(str))
+            .cast<Map<String, dynamic>>()
             .toList() ??
         [];
 
-    // Convert the list of maps into a list of MyDataModel instances
-    List<DataModel> myDataList =
-        dataList.map((data) => DataModel.fromJson(data)).toList();
+    // Convert the list of maps into a list of instances of type T
+    List<T> resultList = dataList.map((data) => fromJson(data)).toList();
 
-    return myDataList;
+    return resultList;
   }
 
   @override
@@ -112,15 +124,19 @@ class LocalDatabaseImplement extends LocalDatabase {
   }
 
   @override
-  Future<void> deleteByIndex({required int index, required String key}) async {
-    final dataList = await getListData(key: key);
+  Future<void> deleteByIndex<T>({
+    required int index,
+    required String key,
+    required T Function(Map<String, dynamic>) fromJson,
+  }) async {
+    final dataList = await getListData<T>(key: key, fromJson: fromJson);
 
     if (index >= 0 && index < dataList.length) {
       dataList.removeAt(index);
 
-      // Encode the updated list of maps into a list of strings
+      // Encode the updated list of objects into a list of JSON strings
       List<String> encodedList =
-          dataList.map((data) => jsonEncode(data.toJson())).toList();
+          dataList.map((data) => jsonEncode(data)).toList();
 
       // Save the updated encoded list back to SharedPreferences
       await sharedPreferences.setStringList(key, encodedList);
@@ -131,29 +147,6 @@ class LocalDatabaseImplement extends LocalDatabase {
   Future<void> deleteByKey({required String key}) async {
     // Remove the entry with the specified key from SharedPreferences
     await sharedPreferences.remove(key);
-  }
-}
-
-// lib/data_model.dart
-
-class DataModel {
-  final String name;
-  final String profession;
-
-  DataModel({required this.name, required this.profession});
-
-  Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'profession': profession,
-    };
-  }
-
-  factory DataModel.fromJson(Map<String, dynamic> json) {
-    return DataModel(
-      name: json['name'],
-      profession: json['profession'],
-    );
   }
 }
 
